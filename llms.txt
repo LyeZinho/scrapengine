@@ -1,0 +1,198 @@
+# ScrapEngine - AI Agent Documentation
+
+## Project Overview
+
+ScrapEngine is an agnostic web scraping engine that extracts maximum data from any website with automatic classification.
+
+**Repository**: /home/pedro/repo/scrapengine
+**Language**: Python (scraper) + TypeScript/Node.js (API)
+
+## Quick Start
+
+```bash
+cd /home/pedro/repo/scrapengine
+docker compose up -d
+```
+
+**Endpoints:**
+- Python API: http://localhost:8001
+- Node API: http://localhost:3000
+
+## Core Files
+
+### Python Scraper (`/python`)
+
+| File | Purpose |
+|------|---------|
+| `main.py` | FastAPI application, endpoints /extract and /scrape |
+| `src/extractor/super_extractor.py` | Main extraction engine |
+| `src/extractor/entity_extractor.py` | Entity recognition (emails, phones, prices) |
+| `src/extractor/cleaner.py` | Data cleaning and deduplication |
+| `src/extractor/categorizer.py` | Multi-level classification |
+| `src/stealth_async.py` | Playwright stealth browser |
+
+### Node API (`/node`)
+
+| File | Purpose |
+|------|---------|
+| `src/index.ts` | Fastify application entry |
+| `src/api/scrape.ts` | Scrape endpoints |
+| `src/queue/worker.ts` | Background job worker |
+| `src/db/index.ts` | PostgreSQL connection |
+
+## API Usage
+
+### POST /extract
+
+Extract complete page data with classification.
+
+```bash
+curl -X POST http://localhost:8001/extract \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com"}'
+```
+
+### Response Structure
+
+```python
+{
+  "url": str,
+  "meta": {
+    "title": str,
+    "description": str,
+    "keywords": str,
+    "author": str,
+    "og_title": str,
+    "og_description": str,
+    "og_image": str,
+    "og_type": str,
+    "twitter_card": str,
+  },
+  "title": str,
+  "description": str,
+  "content": {
+    "headings": {"h1": [], "h2": [], "h3": []},
+    "paragraphs": [str],
+    "lists": [[str]],
+    "tables": [{"headers": [], "rows": []}],
+    "text_raw": str,
+  },
+  "entities": {
+    "emails": [str],
+    "phones": [str],
+    "prices": [str],
+    "dates": [str],
+    "urls": [str],
+    "hashtags": [str],
+    "mentions": [str],
+  },
+  "media": {"images": [{"src": str, "alt": str, "title": str}]},
+  "structure": {"breadcrumbs": [str]},
+  "links": {"all": [], "internal": [], "external": []},
+  "schemas": [dict],
+  "classification": {
+    "page_type": str,  # PAGE_TYPE_ARTICLE, PAGE_TYPE_PRODUCT, etc.
+    "domain": str,     # DOMAIN_JOB, DOMAIN_ECOMMERCE, etc.
+    "content_types": [str],
+    "confidence": {"page_type": float, "domain": float},
+    "all_page_types": {str: float},
+    "all_domains": {str: float},
+  },
+  "quality": {
+    "word_count": int,
+    "paragraph_count": int,
+    "heading_count": int,
+    "image_count": int,
+    "link_count": int,
+    "has_schema": bool,
+  }
+}
+```
+
+## Classification Categories
+
+### Page Types
+- `PAGE_TYPE_ARTICLE` - News, blog posts
+- `PAGE_TYPE_PRODUCT` - E-commerce
+- `PAGE_TYPE_LISTING` - Search results
+- `PAGE_TYPE_PROFILE` - User profiles
+- `PAGE_TYPE_MEDIA` - Images/videos
+- `PAGE_TYPE_DOCUMENT` - PDFs/files
+- `PAGE_TYPE_APPLICATION` - Web apps
+
+### Domain Categories
+- `DOMAIN_JOB` - Jobs, careers
+- `DOMAIN_ECOMMERCE` - Shopping
+- `DOMAIN_REALESTATE` - Properties
+- `DOMAIN_FINANCE` - Financial
+- `DOMAIN_TECH` - Technology
+- `DOMAIN_TRAVEL` - Travel
+- `DOMAIN_EDUCATION` - Education
+- `DOMAIN_HEALTH` - Health
+- `DOMAIN_SOCIAL` - Social networks
+
+## Adding New Features
+
+### To add new entity types:
+
+Edit `/home/pedro/repo/scrapengine/python/src/extractor/entity_extractor.py`:
+```python
+class EntityExtractor:
+    # Add new regex pattern
+    NEW_PATTERN = r'your-pattern'
+    
+    def extract_new_entities(self, text: str) -> List[str]:
+        return list(set(re.findall(self.NEW_PATTERN, text)))
+```
+
+### To add new classification categories:
+
+Edit `/home/pedro/repo/scrapengine/python/src/extractor/categorizer.py`:
+```python
+class Categorizer:
+    NEW_CATEGORY_PATTERNS = {
+        'NEW_TYPE': ['keyword1', 'keyword2'],
+    }
+```
+
+## Testing
+
+```bash
+# Build and start
+docker compose up -d
+
+# Test extraction
+curl -X POST http://localhost:8001/extract \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://www.bbc.com/news"}'
+
+# Check health
+curl http://localhost:8001/health
+
+# View logs
+docker compose logs -f python
+```
+
+## Environment
+
+- PostgreSQL: localhost:5434
+- Redis: localhost:6382
+- Node API: localhost:3000
+- Python API: localhost:8001
+
+## Key Patterns
+
+### Extraction Flow
+1. Playwright loads page (stealth mode)
+2. JavaScript evaluates to extract raw data
+3. Cleaner removes ads/trackers
+4. EntityExtractor finds emails, phones, etc.
+5. Categorizer classifies page type and domain
+6. Returns structured JSON
+
+### Adding New Scraping Logic
+1. Modify `super_extractor.py` - add new JavaScript evaluator
+2. Add cleaning logic to `cleaner.py` if needed
+3. Add classification to `categorizer.py`
+4. Rebuild: `docker compose build python`
+5. Restart: `docker compose up -d python`

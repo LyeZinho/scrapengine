@@ -29,10 +29,12 @@ export function createScrapeWorker(): Worker {
       );
 
       const duration = Date.now() - startTime;
+      const items = response.data;
+      const count = Array.isArray(items) ? items.length : 0;
 
       // Process jobs with deduplication
       const newJobs: JobData[] = [];
-      for (const job of response.data.items || []) {
+      for (const job of items || []) {
         const jobData: JobData = {
           title: job.title,
           company: job.company,
@@ -41,9 +43,9 @@ export function createScrapeWorker(): Worker {
           description: job.description,
           sourceId,
           remote: job.remote,
-          jobType: job.jobType,
-          salaryMin: job.salaryMin,
-          salaryMax: job.salaryMax,
+          jobType: job.job_type,
+          salaryMin: job.salary_min,
+          salaryMax: job.salary_max,
         };
         
         const hash = generateHash(jobData);
@@ -57,7 +59,7 @@ export function createScrapeWorker(): Worker {
       await pool.query(
         `INSERT INTO scrape_logs (source_id, status, items_found, duration_ms)
          VALUES ($1, 'success', $2, $3)`,
-        [sourceId, response.data.count, duration]
+        [sourceId, count, duration]
       );
 
       // Send notifications for new jobs
@@ -65,7 +67,7 @@ export function createScrapeWorker(): Worker {
         await notifyTelegram(newJobs);
       }
 
-      console.log(`Job ${job.id} completed: ${response.data.count} items found, ${newJobs.length} new`);
+      console.log(`Job ${job.id} completed: ${count} items found, ${newJobs.length} new`);
       return response.data;
     } catch (error) {
       const duration = Date.now() - startTime;

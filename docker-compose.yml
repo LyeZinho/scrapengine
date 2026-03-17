@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Node.js API + Orchestrator
   node:
@@ -8,7 +6,7 @@ services:
       dockerfile: Dockerfile
     container_name: scrapengine-node
     ports:
-      - "3000:3000"
+      - "${NODE_PORT:-3000}:3000"
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://scrapengine:${DB_PASSWORD:-scrap123}@postgres:5432/scrapengine
@@ -30,7 +28,7 @@ services:
       dockerfile: Dockerfile
     container_name: scrapengine-python
     ports:
-      - "8000:8000"
+      - "${PYTHON_PORT:-8000}:8000"
     environment:
       - PYTHON_ENV=development
     volumes:
@@ -41,6 +39,8 @@ services:
   redis:
     image: redis:7-alpine
     container_name: scrapengine-redis
+    ports:
+      - "${REDIS_PORT:-6382}:6379"
     volumes:
       - redis-data:/data
     restart: unless-stopped
@@ -54,6 +54,8 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: scrapengine-postgres
+    ports:
+      - "${POSTGRES_PORT:-5434}:5432"
     environment:
       - POSTGRES_DB=scrapengine
       - POSTGRES_USER=scrapengine

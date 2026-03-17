@@ -1,0 +1,302 @@
+[
+  {
+    "id": "29c561ff-fa47-4ca6-b046-315185e6b990",
+    "source_id": "b87dd4fd-0d13-45e8-b2dd-2b1d96127f79",
+    "status": "success",
+    "items_found": 0,
+    "error_message": null,
+    "duration_ms": 5394,
+    "scraped_at": "2026-03-17T22:21:11.521Z",
+    "source_name": "Indeed"
+  },
+  {
+    "id": "b2840097-6d23-4ccd-b537-3259d19e515f",
+    "source_id": "b87dd4fd-0d13-45e8-b2dd-2b1d96127f79",
+    "status": "success",
+    "items_found": 0,
+    "error_message": null,
+    "duration_ms": 5273,
+    "scraped_at": "2026-03-17T22:20:38.142Z",
+    "source_name": "Indeed"
+  },
+  {
+    "id": "f55e71ca-2407-4e66-91c2-3eabd5dfbda8",
+    "source_id": "db902808-f9d4-4b31-ba93-3978dbd19fde",
+    "status": "success",
+    "items_found": 0,
+    "error_message": null,
+    "duration_ms": 4912,
+    "scraped_at": "2026-03-17T22:20:11.029Z",
+    "source_name": "LinkedIn Jobs"
+  },
+  {
+    "id": "3c307253-4097-457f-8d7f-92bc82ec2b2a",
+    "source_id": "db902808-f9d4-4b31-ba93-3978dbd19fde",
+    "status": "success",
+    "items_found": 0,
+    "error_message": null,
+    "duration_ms": 5065,
+    "scraped_at": "2026-03-17T22:20:04.771Z",
+    "source_name": "LinkedIn Jobs"
+  },
+  {
+    "id": "537b8652-559b-456c-aaad-4d7b83a2826d",
+    "source_id": "610e7ce9-66fd-4225-be1a-208005ded253",
+    "status": "success",
+    "items_found": 47,
+    "error_message": null,
+    "duration_ms": 4360,
+    "scraped_at": "2026-03-17T22:19:22.634Z",
+    "source_name": "RemoteOK"
+  },
+  {
+    "id": "78c4a3e5-b1f2-4ff1-9a64-e90563ba53df",
+    "source_id": "610e7ce9-66fd-4225-be1a-208005ded253",
+    "status": "success",
+    "items_found": null,
+    "error_message": null,
+    "duration_ms": 4173,
+    "scraped_at": "2026-03-17T22:18:13.541Z",
+    "source_name": "RemoteOK"
+  },
+  {
+    "id": "20e9b970-cbd8-40e3-9c35-e1efc9d4922b",
+    "source_id": "610e7ce9-66fd-4225-be1a-208005ded253",
+    "status": "success",
+    "items_found": null,
+    "error_message": null,
+    "duration_ms": 4129,
+    "scraped_at": "2026-03-17T22:16:49.557Z",
+    "source_name": "RemoteOK"
+  },
+  {
+    "id": "bddad2db-ac1a-44b9-80ba-1855e4a5591d",
+    "source_id": "a7b051f2-a2ed-4266-a728-e70fa6834c48",
+    "status": "success",
+    "items_found": null,
+    "error_message": null,
+    "duration_ms": 6613,
+    "scraped_at": "2026-03-17T22:14:08.072Z",
+    "source_name": "We Work Remotely"
+  },
+  {
+    "id": "8702d73c-9722-4e15-99b8-866e53682b3d",
+    "source_id": "a7b051f2-a2ed-4266-a728-e70fa6834c48",
+    "status": "success",
+    "items_found": null,
+    "error_message": null,
+    "duration_ms": 6554,
+    "scraped_at": "2026-03-17T22:13:26.830Z",
+    "source_name": "We Work Remotely"
+  },
+  {
+    "id": "4d9368b2-ba33-4d25-85e1-87e5f71c9c7f",
+    "source_id": "610e7ce9-66fd-4225-be1a-208005ded253",
+    "status": "success",
+    "items_found": null,
+    "error_message": null,
+    "duration_ms": 4019,
+    "scraped_at": "2026-03-17T22:13:05.478Z",
+    "source_name": "RemoteOK"
+  },
+  {
+    "id": "0b0458c5-4958-454a-a5b1-de4717d59a1a",
+    "source_id": "610e7ce9-66fd-4225-be1a-208005ded253",
+    "status": "success",
+    "items_found": null,
+    "error_message": null,
+    "duration_ms": 4253,
+    "scraped_at": "2026-03-17T22:12:53.918Z",
+    "source_name": "RemoteOK"
+  },
+  {
+    "id": "3d73e288-d87c-41ad-996f-9a4befac26f5",
+    "source_id": "3d9de307-6e7d-404a-b501-1afc8c6e9138",
+    "status": "success",
+    "items_found": null,
+    "error_message": null,
+    "duration_ms": 5506,
+    "scraped_at": "2026-03-17T22:11:19.001Z",
+    "source_name": "Glassdoor"
+  },
+  {
+    "id": "321cb069-dd21-4819-a68d-1eea4bcf590a",
+    "source_id": "3d9de307-6e7d-404a-b501-1afc8c6e9138",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 3,
+    "scraped_at": "2026-03-17T22:10:04.723Z",
+    "source_name": "Glassdoor"
+  },
+  {
+    "id": "d3289a7f-d1d9-4fc3-9efd-208211c4a224",
+    "source_id": "3d9de307-6e7d-404a-b501-1afc8c6e9138",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 1,
+    "scraped_at": "2026-03-17T22:09:54.665Z",
+    "source_name": "Glassdoor"
+  },
+  {
+    "id": "9cb017c4-e471-4dc3-b261-9f78b73af708",
+    "source_id": "3d9de307-6e7d-404a-b501-1afc8c6e9138",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 1,
+    "scraped_at": "2026-03-17T22:09:49.577Z",
+    "source_name": "Glassdoor"
+  },
+  {
+    "id": "a3638d4f-1047-4cbb-a669-3d5e045dabd0",
+    "source_id": "3d9de307-6e7d-404a-b501-1afc8c6e9138",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 2,
+    "scraped_at": "2026-03-17T22:04:13.087Z",
+    "source_name": "Glassdoor"
+  },
+  {
+    "id": "555e149e-1daa-4a16-9900-3778b9f24e90",
+    "source_id": "3d9de307-6e7d-404a-b501-1afc8c6e9138",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 1,
+    "scraped_at": "2026-03-17T22:04:03.002Z",
+    "source_name": "Glassdoor"
+  },
+  {
+    "id": "c44e4b2e-b569-403d-a32a-36c2eab3b47c",
+    "source_id": "3d9de307-6e7d-404a-b501-1afc8c6e9138",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 2,
+    "scraped_at": "2026-03-17T22:03:57.983Z",
+    "source_name": "Glassdoor"
+  },
+  {
+    "id": "6405a075-8a5c-4f71-985d-b2406bff732e",
+    "source_id": "3d9de307-6e7d-404a-b501-1afc8c6e9138",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 2,
+    "scraped_at": "2026-03-17T22:01:15.261Z",
+    "source_name": "Glassdoor"
+  },
+  {
+    "id": "f89542e4-46a3-472b-bd11-b37e76d8496f",
+    "source_id": "3d9de307-6e7d-404a-b501-1afc8c6e9138",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 1,
+    "scraped_at": "2026-03-17T22:01:05.179Z",
+    "source_name": "Glassdoor"
+  },
+  {
+    "id": "9dac338b-80f1-45d1-a098-1552f8388447",
+    "source_id": "3d9de307-6e7d-404a-b501-1afc8c6e9138",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 1,
+    "scraped_at": "2026-03-17T22:01:03.665Z",
+    "source_name": "Glassdoor"
+  },
+  {
+    "id": "7e4521f5-621a-4ca6-b255-0aac8995f626",
+    "source_id": "3d9de307-6e7d-404a-b501-1afc8c6e9138",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 2,
+    "scraped_at": "2026-03-17T22:01:00.143Z",
+    "source_name": "Glassdoor"
+  },
+  {
+    "id": "8e5924a3-a5ef-4fb9-8264-7621e40887ff",
+    "source_id": "3d9de307-6e7d-404a-b501-1afc8c6e9138",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 1,
+    "scraped_at": "2026-03-17T22:00:53.581Z",
+    "source_name": "Glassdoor"
+  },
+  {
+    "id": "431adbb3-cdc8-4d56-8417-57e3b86ebe07",
+    "source_id": "3d9de307-6e7d-404a-b501-1afc8c6e9138",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 12,
+    "scraped_at": "2026-03-17T22:00:48.506Z",
+    "source_name": "Glassdoor"
+  },
+  {
+    "id": "5fa1c68c-5668-4d87-87a4-34224e163154",
+    "source_id": "a2cd7bf5-06ac-41e7-9b49-1372f69b192c",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 2,
+    "scraped_at": "2026-03-17T21:40:15.051Z",
+    "source_name": "Test Source"
+  },
+  {
+    "id": "0e1a1b79-32a5-4639-b12f-f9af7d757a27",
+    "source_id": "a2cd7bf5-06ac-41e7-9b49-1372f69b192c",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 1,
+    "scraped_at": "2026-03-17T21:40:04.984Z",
+    "source_name": "Test Source"
+  },
+  {
+    "id": "e2946483-8ae9-4652-8f3d-17029f960514",
+    "source_id": "a2cd7bf5-06ac-41e7-9b49-1372f69b192c",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 1,
+    "scraped_at": "2026-03-17T21:39:59.973Z",
+    "source_name": "Test Source"
+  },
+  {
+    "id": "d5343aa2-b129-48b6-81a0-ae0cc16d0eb3",
+    "source_id": "a2cd7bf5-06ac-41e7-9b49-1372f69b192c",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 3,
+    "scraped_at": "2026-03-17T21:39:52.722Z",
+    "source_name": "Test Source"
+  },
+  {
+    "id": "9e824104-4535-47fd-8468-66344850d89f",
+    "source_id": "a2cd7bf5-06ac-41e7-9b49-1372f69b192c",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 4,
+    "scraped_at": "2026-03-17T21:39:42.649Z",
+    "source_name": "Test Source"
+  },
+  {
+    "id": "c1866115-9901-4d95-a7a2-b3492bd11af7",
+    "source_id": "a2cd7bf5-06ac-41e7-9b49-1372f69b192c",
+    "status": "failed",
+    "items_found": 0,
+    "error_message": "Invalid URL",
+    "duration_ms": 24,
+    "scraped_at": "2026-03-17T21:39:37.527Z",
+    "source_name": "Test Source"
+  }
+]

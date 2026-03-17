@@ -34,7 +34,11 @@ def normalize_jobposting(data: Dict[str, Any], source_url: str = "") -> Optional
     # Extract location
     location = None
     if 'jobLocation' in data:
-        location = data['jobLocation'].get('address', {}).get('addressLocality')
+        job_loc = data['jobLocation']
+        if isinstance(job_loc, list) and job_loc:
+            job_loc = job_loc[0]
+        if isinstance(job_loc, dict):
+            location = job_loc.get('address', {}).get('addressLocality')
     elif 'location' in data:
         location = data['location']
     

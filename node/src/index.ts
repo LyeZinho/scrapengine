@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import 'dotenv/config';
 import { pool, initDatabase } from './db/index.js';
 import { createScrapeWorker } from './queue/worker.js';
 import { sourcesRoutes } from './api/sources.js';
