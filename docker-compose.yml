@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # Node.js API + Orchestrator
+  node:
+    build:
+      context: ./node
+      dockerfile: Dockerfile
+    container_name: scrapengine-node
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://scrapengine:${DB_PASSWORD:-scrap123}@postgres:5432/scrapengine
+      - REDIS_URL=redis://redis:6379
+      - PYTHON_API_URL=http://python:8000
+    depends_on:
+      - postgres
+      - redis
+      - python
+    volumes:
+      - ./node:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  # Python Scraper Engine
+  python:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    container_name: scrapengine-python
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHON_ENV=development
+    volumes:
+      - ./python:/app
+    restart: unless-stopped
+
+  # Redis for BullMQ
+  redis:
+    image: redis:7-alpine
+    container_name: scrapengine-redis
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: scrapengine-postgres
+    environment:
+      - POSTGRES_DB=scrapengine
+      - POSTGRES_USER=scrapengine
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-scrap123}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scrapengine"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis-data:
+  postgres-data:
