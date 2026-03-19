@@ -11,6 +11,6 @@ RUN npm run build
 # Copy schema.sql explicitly (TypeScript doesn't copy non-.ts files)
 COPY src/db/schema.sql dist/db/
 
-EXPOSE 3000
+EXPOSE 7650
 
 CMD ["npm", "start"]

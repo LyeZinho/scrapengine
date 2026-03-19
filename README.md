@@ -56,10 +56,10 @@ docker compose ps
 
 | Service | Port | Description |
 |---------|------|-------------|
-| Node API | 3000 | REST API and job scheduler |
-| Python Scraper | 8001 | Web scraping engine |
-| PostgreSQL | 5434 | Data storage |
-| Redis | 6382 | Job queue |
+| Node API | 7650 | REST API and job scheduler |
+| Python Scraper | 7651 | Web scraping engine |
+| PostgreSQL | 7652 | Data storage |
+| Redis | 7653 | Job queue |
 
 ## API Endpoints
 
@@ -215,18 +215,18 @@ Create a `.env` file:
 
 ```env
 # API Ports
-NODE_PORT=3000
-PYTHON_PORT=8001
-POSTGRES_PORT=5434
-REDIS_PORT=6382
+NODE_PORT=7650
+PYTHON_PORT=7651
+POSTGRES_PORT=7652
+REDIS_PORT=7653
 
 # Database
 DB_PASSWORD=scrap123
-DATABASE_URL=postgresql://scrapengine:scrap123@localhost:5434/scrapengine
-REDIS_URL=redis://localhost:6382
+DATABASE_URL=postgresql://scrapengine:scrap123@localhost:7652/scrapengine
+REDIS_URL=redis://localhost:7653
 
 # Python API
-PYTHON_API_URL=http://localhost:8001
+PYTHON_API_URL=http://localhost:7651
 ```
 
 ## Development
@@ -265,12 +265,12 @@ docker compose build node
 
 ```bash
 # Test extract endpoint
-curl -X POST http://localhost:8001/extract \
+curl -X POST http://localhost:7651/extract \
   -H "Content-Type: application/json" \
   -d '{"url": "https://www.bbc.com/news"}'
 
 # Test health
-curl http://localhost:8001/health
+curl http://localhost:7651/health
 ```
 
 ## License

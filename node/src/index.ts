@@ -11,7 +11,7 @@ import { startScheduler, stopScheduler } from './services/scheduler.js';
 const app = Fastify({ logger: true });
 
 // Configure CORS
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:7650'];
 await app.register(cors, { origin: allowedOrigins });
 
 // Register routes
@@ -27,7 +27,7 @@ const start = async (): Promise<void> => {
     await initDatabase();
     createScrapeWorker();
     await startScheduler();
-    await app.listen({ port: 3000, host: '0.0.0.0' });
+    await app.listen({ port: 7650, host: '0.0.0.0' });
   } catch (err) {
     app.log.error(err);
     process.exit(1);

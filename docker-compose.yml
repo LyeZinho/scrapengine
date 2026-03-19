@@ -6,12 +6,12 @@ services:
       dockerfile: Dockerfile
     container_name: scrapengine-node
     ports:
-      - "${NODE_PORT:-3000}:3000"
+      - "${NODE_PORT:-7650}:7650"
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://scrapengine:${DB_PASSWORD:-scrap123}@postgres:5432/scrapengine
       - REDIS_URL=redis://redis:6379
-      - PYTHON_API_URL=http://python:8000
+      - PYTHON_API_URL=http://python:7651
     depends_on:
       - postgres
       - redis
@@ -28,7 +28,7 @@ services:
       dockerfile: Dockerfile
     container_name: scrapengine-python
     ports:
-      - "${PYTHON_PORT:-8000}:8000"
+      - "${PYTHON_PORT:-7651}:7651"
     environment:
       - PYTHON_ENV=development
     volumes:
@@ -40,7 +40,7 @@ services:
     image: redis:7-alpine
     container_name: scrapengine-redis
     ports:
-      - "${REDIS_PORT:-6382}:6379"
+      - "${REDIS_PORT:-7653}:6379"
     volumes:
       - redis-data:/data
     restart: unless-stopped
@@ -55,7 +55,7 @@ services:
     image: postgres:15-alpine
     container_name: scrapengine-postgres
     ports:
-      - "${POSTGRES_PORT:-5434}:5432"
+      - "${POSTGRES_PORT:-7652}:5432"
     environment:
       - POSTGRES_DB=scrapengine
       - POSTGRES_USER=scrapengine
