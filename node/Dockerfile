@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:20-alpine AS builder
 
 # Coolify build arguments
 ARG COOLIFY_URL
@@ -27,8 +27,35 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Copy schema.sql explicitly (TypeScript doesn't copy non-.ts files)
 COPY src/db/schema.sql dist/db/
+
+FROM node:20-alpine
+
+# Coolify build arguments
+ARG COOLIFY_URL
+ARG COOLIFY_FQDN
+ARG ADMIN_API_KEY
+ARG NODE_PORT
+ARG DB_PASSWORD
+ARG POSTGRES_PORT
+ARG REDIS_PORT
+ARG DATABASE_URL
+ARG REDIS_URL
+ARG PYTHON_API_URL
+ARG DEFAULT_RATE_LIMIT
+ARG WEBHOOK_TIMEOUT_MS
+ARG WEBHOOK_MAX_RETRIES
+ARG PYTHON_PORT
+ARG SCRAPE_TIMEOUT
+ARG ALLOWED_ORIGINS
+ARG COOLIFY_BUILD_SECRETS_HASH
+
+WORKDIR /app
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+
+ENV NODE_ENV=production
 
 EXPOSE 7650
 
