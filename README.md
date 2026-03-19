@@ -273,6 +273,125 @@ curl -X POST http://localhost:7651/extract \
 curl http://localhost:7651/health
 ```
 
-## License
+---
 
-MIT License - See LICENSE file for details
+## API Documentation
+
+### Authentication
+
+**Admin Authentication (Client Management)**
+```bash
+curl -X GET http://localhost:7650/admin/clients \
+  -H "Authorization: Bearer YOUR_ADMIN_API_KEY"
+```
+
+**Client Authentication (Scraping Requests)**
+```bash
+curl -X POST http://localhost:7650/v1/scrape \
+  -H "X-API-Key: YOUR_CLIENT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com"}'
+```
+
+### Admin Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/admin/clients` | Create new API client |
+| GET | `/admin/clients` | List all clients |
+| GET | `/admin/clients/:id` | Get client details |
+| PUT | `/admin/clients/:id` | Update client |
+| DELETE | `/admin/clients/:id` | Deactivate client |
+| POST | `/admin/clients/:id/regenerate-key` | Regenerate API key |
+| GET | `/admin/clients/:clientId/webhooks` | List client's webhooks |
+| POST | `/admin/clients/:clientId/webhooks` | Create webhook |
+| DELETE | `/admin/webhooks/:id` | Delete webhook |
+
+### Client Endpoints (V1)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/v1/scrape` | Create scrape job |
+| GET | `/v1/jobs` | List jobs |
+| GET | `/v1/jobs/:id` | Get job details |
+| POST | `/v1/webhooks` | Create webhook |
+| GET | `/v1/webhooks` | List webhooks |
+| DELETE | `/v1/webhooks/:id` | Delete webhook |
+
+### Webhooks
+
+**Event Types:**
+- `started` - Job began processing
+- `progress` - Job progress update (30%, 70%)
+- `completed` - Job finished successfully
+- `failed` - Job failed with error
+
+**Payload Format:**
+```json
+{
+  "event": "completed",
+  "timestamp": "2026-03-19T10:30:00.000Z",
+  "job_id": "uuid",
+  "url": "https://example.com",
+  "status": "completed",
+  "progress": 100,
+  "data": { ... },
+  "error": null
+}
+```
+
+**Signature Verification:**
+```
+X-Webhook-Signature: sha256=<hmac_sha256_hex>
+```
+
+Verify with: `HMAC-SHA256(webhook_secret, raw_body)`
+
+### Rate Limiting
+
+Default: 60 requests per minute per client
+
+Response headers:
+- `X-RateLimit-Limit: 60`
+- `X-RateLimit-Remaining: 59`
+- `X-RateLimit-Reset: 1742380260`
+
+When exceeded (429):
+```json
+{
+  "error": "Rate limit exceeded",
+  "code": "RATE_LIMITED",
+  "limit": 60,
+  "remaining": 0,
+  "reset_at": "2026-03-19T10:31:00.000Z"
+}
+```
+
+### Error Codes
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `INVALID_API_KEY` | 401 | API key missing or invalid |
+| `CLIENT_INACTIVE` | 401 | Client account disabled |
+| `RATE_LIMITED` | 429 | Rate limit exceeded |
+| `VALIDATION_ERROR` | 400 | Invalid request body |
+| `NOT_FOUND` | 404 | Resource not found |
+| `INTERNAL_ERROR` | 500 | Server error |
+
+### Environment Variables
+
+```env
+# Required for Admin
+ADMIN_API_KEY=your-admin-key
+
+# Optional (with defaults)
+NODE_PORT=7650
+PYTHON_PORT=7651
+POSTGRES_PORT=7652
+REDIS_PORT=7653
+DEFAULT_RATE_LIMIT=60
+WEBHOOK_TIMEOUT_MS=5000
+WEBHOOK_MAX_RETRIES=3
+SCRAPE_TIMEOUT=60000
+```
+
