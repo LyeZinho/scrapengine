@@ -9,6 +9,7 @@ services:
       - "${NODE_PORT:-7650}:7650"
     environment:
       - NODE_ENV=development
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-changeme-in-production}
       - DATABASE_URL=postgresql://scrapengine:${DB_PASSWORD:-scrap123}@postgres:5432/scrapengine
       - REDIS_URL=redis://redis:6379
       - PYTHON_API_URL=http://python:7651
