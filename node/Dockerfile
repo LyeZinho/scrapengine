@@ -22,7 +22,7 @@ ARG COOLIFY_BUILD_SECRETS_HASH
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci
 
 COPY . .
 RUN npm run build
