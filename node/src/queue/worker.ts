@@ -3,9 +3,7 @@ import axios from 'axios';
 import { pool } from '../db/index.js';
 import { redisConnectionOptions } from './connection.js';
 import type { ScrapeJobData } from './index.js';
-import { saveJob, generateHash } from '../services/deduplication.js';
-import { notifyTelegram } from '../services/notification.js';
-import type { JobData } from '../services/deduplication.js';
+import { triggerWebhooks } from '../services/webhook.js';
 
 let scrapeWorker: Worker | null = null;
 
@@ -15,70 +13,108 @@ export function createScrapeWorker(): Worker {
   }
 
   scrapeWorker = new Worker<ScrapeJobData>('scrape', async (job) => {
-    const { sourceId, url, schemaType } = job.data;
+    const { jobId, clientId, url } = job.data;
     const startTime = Date.now();
     const timeout = parseInt(process.env.SCRAPE_TIMEOUT || '60000');
 
     try {
       console.log(`Processing job ${job.id}: scraping ${url}`);
       
+      // Update job status to started
+      await pool.query(
+        'UPDATE scrape_jobs SET status = $1, started_at = CURRENT_TIMESTAMP WHERE id = $2',
+        ['started', jobId]
+      );
+
+      // Trigger started webhook
+      await triggerWebhooks(clientId, {
+        event: 'started',
+        timestamp: new Date().toISOString(),
+        job_id: jobId,
+        url,
+        status: 'started',
+        progress: 10
+      });
+
+      // Trigger progress webhook
+      await triggerWebhooks(clientId, {
+        event: 'progress',
+        timestamp: new Date().toISOString(),
+        job_id: jobId,
+        url,
+        status: 'progress',
+        progress: 30
+      });
+
+      // Make the actual scraping request
       const response = await axios.post(
-        `${process.env.PYTHON_API_URL}/scrape`,
-        { url, schema_type: schemaType },
+        `${process.env.PYTHON_API_URL}/extract`,
+        { url },
         { timeout }
       );
 
-      const duration = Date.now() - startTime;
-      const items = response.data;
-      const count = Array.isArray(items) ? items.length : 0;
-
-      // Process jobs with deduplication
-      const newJobs: JobData[] = [];
-      for (const job of items || []) {
-        const jobData: JobData = {
-          title: job.title,
-          company: job.company,
-          location: job.location,
-          url: job.url,
-          description: job.description,
-          sourceId,
-          remote: job.remote,
-          jobType: job.job_type,
-          salaryMin: job.salary_min,
-          salaryMax: job.salary_max,
-        };
-        
-        const hash = generateHash(jobData);
-        const isNew = await saveJob(jobData, hash);
-        
-        if (isNew) {
-          newJobs.push(jobData);
-        }
-      }
-
+      // Update progress
       await pool.query(
-        `INSERT INTO scrape_logs (source_id, status, items_found, duration_ms)
-         VALUES ($1, 'success', $2, $3)`,
-        [sourceId, count, duration]
+        'UPDATE scrape_jobs SET status = $1, progress = $2 WHERE id = $3',
+        ['progress', 70, jobId]
       );
 
-      // Send notifications for new jobs
-      if (newJobs.length > 0) {
-        await notifyTelegram(newJobs);
-      }
+      await triggerWebhooks(clientId, {
+        event: 'progress',
+        timestamp: new Date().toISOString(),
+        job_id: jobId,
+        url,
+        status: 'progress',
+        progress: 70
+      });
 
-      console.log(`Job ${job.id} completed: ${count} items found, ${newJobs.length} new`);
+      // Save result
+      await pool.query(
+        `UPDATE scrape_jobs SET 
+          status = $1, 
+          progress = 100, 
+          result = $2, 
+          completed_at = CURRENT_TIMESTAMP 
+         WHERE id = $3`,
+        ['completed', JSON.stringify(response.data), jobId]
+      );
+
+      // Trigger completed webhook
+      await triggerWebhooks(clientId, {
+        event: 'completed',
+        timestamp: new Date().toISOString(),
+        job_id: jobId,
+        url,
+        status: 'completed',
+        progress: 100,
+        data: response.data
+      });
+
+      console.log(`Job ${job.id} completed successfully`);
       return response.data;
     } catch (error) {
-      const duration = Date.now() - startTime;
       const message = error instanceof Error ? error.message : 'Unknown error';
-      const stack = error instanceof Error ? error.stack : undefined;
 
+      // Update job status to failed
       await pool.query(
-        `INSERT INTO scrape_logs (source_id, status, error_message, duration_ms)
-         VALUES ($1, 'failed', $2, $3)`,
-        [sourceId, message, duration]
+        `UPDATE scrape_jobs SET 
+          status = $1, 
+          error_message = $2, 
+          completed_at = CURRENT_TIMESTAMP 
+         WHERE id = $3`,
+        ['failed', message, jobId]
       );
+
+      // Trigger failed webhook
+      await triggerWebhooks(clientId, {
+        event: 'failed',
+        timestamp: new Date().toISOString(),
+        job_id: jobId,
+        url,
+        status: 'failed',
+        progress: 0,
+        error: message
+      });
 
       console.error(`Job ${job.id} failed:`, message);
       throw error;

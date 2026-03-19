@@ -4,15 +4,14 @@ import { redisConnectionOptions } from './connection.js';
 export const scrapeQueue = new Queue('scrape', { connection: redisConnectionOptions });
 
 export interface ScrapeJobData {
-  sourceId: string;
+  jobId: string;
+  clientId: string;
   url: string;
-  schemaType: string;
 }
 
 export async function addScrapeJob(data: ScrapeJobData): Promise<string | undefined> {
-  // Validate input
-  if (!data.url || !data.sourceId) {
-    throw new Error('Missing required job data: url and sourceId are required');
+  if (!data.url || !data.jobId || !data.clientId) {
+    throw new Error('Missing required job data: url, jobId, and clientId are required');
   }
   
   try {
