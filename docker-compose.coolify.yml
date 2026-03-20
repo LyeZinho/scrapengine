@@ -1,0 +1,59 @@
+services:
+  node:
+    image: ghcr.io/LyeZinho/scrapengine-node:latest
+    container_name: scrapengine-node
+    ports:
+      - "${NODE_PORT:-7650}:7650"
+    environment:
+      - NODE_ENV=production
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - PYTHON_API_URL=${PYTHON_API_URL}
+      - DEFAULT_RATE_LIMIT=${DEFAULT_RATE_LIMIT:-60}
+      - WEBHOOK_TIMEOUT_MS=${WEBHOOK_TIMEOUT_MS:-5000}
+      - WEBHOOK_MAX_RETRIES=${WEBHOOK_MAX_RETRIES:-3}
+      - SCRAPE_TIMEOUT=${SCRAPE_TIMEOUT:-60000}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: scrapengine-redis
+    ports:
+      - "${REDIS_PORT:-7653}:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: scrapengine-postgres
+    ports:
+      - "${POSTGRES_PORT:-7652}:5432"
+    environment:
+      - POSTGRES_DB=scrapengine
+      - POSTGRES_USER=scrapengine
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scrapengine"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis-data:
+  postgres-data:

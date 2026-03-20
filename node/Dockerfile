@@ -1,9 +1,6 @@
-# ── Stage 1: Browser download (Alpine, no apt-get) ─────────────────────────
 FROM node:20-alpine AS browser
 
 WORKDIR /app
-
-RUN apk add --no-cache curl
 
 COPY package*.json ./
 RUN npm ci --omit=dev
@@ -11,7 +8,6 @@ RUN npm ci --omit=dev
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 RUN npx playwright install chromium
 
-# ── Stage 2: Build ───────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
 
 ARG COOLIFY_URL
@@ -44,7 +40,6 @@ RUN npm run build
 
 RUN mkdir -p dist/db && cp src/db/schema.sql dist/db/
 
-# ── Stage 3: Production ─────────────────────────────────────────────────────
 FROM node:20-alpine
 
 ARG COOLIFY_URL
