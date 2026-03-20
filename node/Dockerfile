@@ -56,10 +56,29 @@ ARG REDIS_URL
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libnss3 \
+    libxkbcommon0 \
+    libgbm1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcups2 \
+    libxdamage1 \
+    libxrandr2 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libxcomposite1 \
+    libdrm2 \
+    libxcb1 \
+    libx11-6 \
+    fonts-liberation \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY package*.json ./
 RUN npm ci --omit=dev --ignore-scripts
 
-RUN npx playwright install --with-deps chromium
+RUN npx playwright install chromium
 
 COPY --from=builder /app/dist ./dist
 
