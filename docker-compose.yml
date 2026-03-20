@@ -12,28 +12,12 @@ services:
       - ADMIN_API_KEY=${ADMIN_API_KEY:-changeme-in-production}
       - DATABASE_URL=postgresql://scrapengine:${DB_PASSWORD:-scrap123}@postgres:5432/scrapengine
       - REDIS_URL=redis://redis:6379
-      - PYTHON_API_URL=http://python:7651
     depends_on:
       - postgres
       - redis
-      - python
     volumes:
       - ./node:/app
       - /app/node_modules
-    restart: unless-stopped
-
-  # Python Scraper Engine
-  python:
-    build:
-      context: ./python
-      dockerfile: Dockerfile
-    container_name: scrapengine-python
-    ports:
-      - "${PYTHON_PORT:-7651}:7651"
-    environment:
-      - PYTHON_ENV=development
-    volumes:
-      - ./python:/app
     restart: unless-stopped
 
   # Redis for BullMQ
