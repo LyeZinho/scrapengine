@@ -56,22 +56,10 @@ ARG REDIS_URL
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libicu72 \
-    libgconf-2-4 \
-    libxss1 \
-    fonts-liberation \
-    libappindicator3-1 \
-    libnss3 \
-    libxtst6 \
-    xdg-utils \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
 COPY package*.json ./
 RUN npm ci --omit=dev --ignore-scripts
 
-RUN npx playwright install chromium
+RUN npx playwright install --with-deps chromium
 
 COPY --from=builder /app/dist ./dist
 
