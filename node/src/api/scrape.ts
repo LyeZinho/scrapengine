@@ -22,9 +22,13 @@ export async function scrapeRoutes(app: FastifyInstance): Promise<void> {
 
     const source = sourceResult.rows[0];
     
+    const { randomUUID } = await import('crypto');
+    
     await addScrapeJob({
-      sourceId: source.id,
+      jobId: randomUUID(),
+      clientId: source.client_id,
       url: source.url_pattern,
+      sourceId: source.id,
       schemaType: source.schema_type,
     });
 

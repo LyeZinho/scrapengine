@@ -38,11 +38,15 @@ async function checkAndQueueScrapeJobs(): Promise<void> {
       console.log(`Found ${sources.rows.length} sources to scrape`);
     }
 
+    const { randomUUID } = await import('crypto');
+
     for (const source of sources.rows) {
       try {
         await addScrapeJob({
-          sourceId: source.id,
+          jobId: randomUUID(),
+          clientId: source.client_id,
           url: source.url_pattern,
+          sourceId: source.id,
           schemaType: source.schema_type,
         });
         

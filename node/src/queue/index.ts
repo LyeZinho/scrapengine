@@ -7,6 +7,8 @@ export interface ScrapeJobData {
   jobId: string;
   clientId: string;
   url: string;
+  sourceId?: string;
+  schemaType?: string;
 }
 
 export async function addScrapeJob(data: ScrapeJobData): Promise<string | undefined> {
