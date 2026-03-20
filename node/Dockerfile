@@ -1,6 +1,5 @@
 FROM node:20-alpine AS builder
 
-# Coolify build arguments
 ARG COOLIFY_URL
 ARG COOLIFY_FQDN
 ARG ADMIN_API_KEY
@@ -31,7 +30,6 @@ COPY src/db/schema.sql dist/db/
 
 FROM node:20-alpine
 
-# Coolify build arguments
 ARG COOLIFY_URL
 ARG COOLIFY_FQDN
 ARG ADMIN_API_KEY
@@ -52,8 +50,9 @@ ARG COOLIFY_BUILD_SECRETS_HASH
 
 WORKDIR /app
 
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
+COPY package*.json ./
+RUN npm ci --omit=dev --ignore-scripts
+
 COPY --from=builder /app/dist ./dist
 
 ENV NODE_ENV=production
