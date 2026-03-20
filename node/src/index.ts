@@ -9,6 +9,7 @@ import { v1ScrapeRoutes } from './api/v1/scrape.js';
 import { v1JobRoutes } from './api/v1/jobs.js';
 import { v1WebhookRoutes } from './api/v1/webhooks.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import { scrapeUrl } from './scraper/index.js';
 
 const app = Fastify({ logger: true });
 
@@ -43,6 +44,48 @@ app.get('/health/ready', async (request, reply) => {
       status: 'not ready',
       error: error instanceof Error ? error.message : 'Unknown error'
     });
+  }
+});
+
+// Scraper endpoints
+app.post<{ Body: { url?: string; schema_type?: string } }>('/extract', async (request, reply) => {
+  const { url } = request.body;
+  
+  if (!url || typeof url !== 'string') {
+    return reply.status(400).send({ error: 'url is required' });
+  }
+
+  try {
+    const result = await scrapeUrl(url);
+    return result.data;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return reply.status(500).send({ error: message });
+  }
+});
+
+app.post<{ Body: { url?: string; schema_type?: string } }>('/scrape', async (request, reply) => {
+  const { url, schema_type } = request.body;
+  
+  if (!url || typeof url !== 'string') {
+    return reply.status(400).send({ error: 'url is required' });
+  }
+
+  try {
+    const result = await scrapeUrl(url);
+    
+    // If schema_type is JobPosting, normalize to JobPosting schema
+    if (schema_type === 'JobPosting') {
+      const { normalizeJobPosting } = await import('./scraper/normalizer.js');
+      const rawData = result.data as Record<string, unknown>;
+      const normalized = normalizeJobPosting(rawData as unknown as Record<string, unknown>, url);
+      return normalized || result.data;
+    }
+    
+    return result.data;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return reply.status(500).send({ error: message });
   }
 });
 

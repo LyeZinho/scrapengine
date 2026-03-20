@@ -18,7 +18,8 @@
     "uuid": "^9.0.1",
     "dotenv": "^16.3.1",
     "telegraf": "^4.15.0",
-    "sha256": "^0.2.0"
+    "sha256": "^0.2.0",
+    "playwright": "^1.40.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
