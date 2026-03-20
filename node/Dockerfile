@@ -24,7 +24,7 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-COPY src/db/schema.sql dist/db/
+RUN mkdir -p dist/db && cp src/db/schema.sql dist/db/
 
 FROM node:20-slim
 
