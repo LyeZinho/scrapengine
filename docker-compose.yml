@@ -10,22 +10,9 @@ services:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://scrapengine:${DB_PASSWORD:-scrap123}@postgres:5432/scrapengine
       - REDIS_URL=redis://redis:6379
-      - PYTHON_API_URL=http://python:8000
     depends_on:
       - postgres
       - redis
-      - python
-    restart: unless-stopped
-
-  python:
-    build:
-      context: ./python
-      dockerfile: Dockerfile
-    container_name: scrapengine-python
-    ports:
-      - "${PYTHON_PORT:-8000}:8000"
-    environment:
-      - PYTHON_ENV=production
     restart: unless-stopped
 
   # Redis for BullMQ
