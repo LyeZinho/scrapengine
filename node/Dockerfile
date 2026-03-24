@@ -1,34 +1,4 @@
-FROM node:20-alpine AS browser
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci --omit=dev
-
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-RUN npx playwright install chromium
-
 FROM node:20-alpine AS builder
-
-ARG COOLIFY_URL
-ARG COOLIFY_FQDN
-ARG ADMIN_API_KEY
-ARG NODE_PORT
-ARG DB_PASSWORD
-ARG POSTGRES_PORT
-ARG REDIS_PORT
-ARG DATABASE_URL
-ARG REDIS_URL
-ARG DEFAULT_RATE_LIMIT
-ARG WEBHOOK_TIMEOUT_MS
-ARG WEBHOOK_MAX_RETRIES
-ARG SCRAPE_TIMEOUT
-ARG ALLOWED_ORIGINS
-ARG COOLIFY_BUILD_SECRETS_HASH
-ARG PYTHON_PORT
-ARG PYTHON_API_URL
-ARG SERVICE_URL_NODE
-ARG SERVICE_FQDN_NODE
 
 WORKDIR /app
 
@@ -37,42 +7,17 @@ RUN npm ci
 
 COPY . .
 RUN npm run build
-
-RUN mkdir -p dist/db && cp src/db/schema.sql dist/db/
+RUN cp src/db/schema.sql dist/db/
 
 FROM node:20-alpine
 
-ARG COOLIFY_URL
-ARG COOLIFY_FQDN
-ARG ADMIN_API_KEY
-ARG NODE_PORT
-ARG DB_PASSWORD
-ARG POSTGRES_PORT
-ARG REDIS_PORT
-ARG DATABASE_URL
-ARG REDIS_URL
-ARG DEFAULT_RATE_LIMIT
-ARG WEBHOOK_TIMEOUT_MS
-ARG WEBHOOK_MAX_RETRIES
-ARG SCRAPE_TIMEOUT
-ARG ALLOWED_ORIGINS
-ARG COOLIFY_BUILD_SECRETS_HASH
-ARG PYTHON_PORT
-ARG PYTHON_API_URL
-ARG SERVICE_URL_NODE
-ARG SERVICE_FQDN_NODE
-
 WORKDIR /app
 
-RUN apk add --no-cache nss freetype harfbuzz ca-certificates ttf-freefont udev
+COPY package*.json ./
+RUN npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
-COPY --from=browser /ms-playwright /ms-playwright
-COPY --from=browser /app/node_modules ./node_modules
 
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-ENV NODE_ENV=production
+EXPOSE 3000
 
-EXPOSE 7650
-
-CMD ["node", "dist/index.js"]
+CMD ["npm", "start"]

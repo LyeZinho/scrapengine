@@ -1,23 +1,31 @@
 services:
-  # Node.js API + Orchestrator
   node:
     build:
       context: ./node
       dockerfile: Dockerfile
     container_name: scrapengine-node
     ports:
-      - "${NODE_PORT:-7650}:7650"
+      - "${NODE_PORT:-3000}:3000"
     environment:
-      - NODE_ENV=development
-      - ADMIN_API_KEY=${ADMIN_API_KEY:-changeme-in-production}
+      - NODE_ENV=production
       - DATABASE_URL=postgresql://scrapengine:${DB_PASSWORD:-scrap123}@postgres:5432/scrapengine
       - REDIS_URL=redis://redis:6379
+      - PYTHON_API_URL=http://python:8000
     depends_on:
       - postgres
       - redis
-    volumes:
-      - ./node:/app
-      - /app/node_modules
+      - python
+    restart: unless-stopped
+
+  python:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    container_name: scrapengine-python
+    ports:
+      - "${PYTHON_PORT:-8000}:8000"
+    environment:
+      - PYTHON_ENV=production
     restart: unless-stopped
 
   # Redis for BullMQ
@@ -25,7 +33,7 @@ services:
     image: redis:7-alpine
     container_name: scrapengine-redis
     ports:
-      - "${REDIS_PORT:-7653}:6379"
+      - "${REDIS_PORT:-6382}:6379"
     volumes:
       - redis-data:/data
     restart: unless-stopped
@@ -40,7 +48,7 @@ services:
     image: postgres:15-alpine
     container_name: scrapengine-postgres
     ports:
-      - "${POSTGRES_PORT:-7652}:5432"
+      - "${POSTGRES_PORT:-5434}:5432"
     environment:
       - POSTGRES_DB=scrapengine
       - POSTGRES_USER=scrapengine
