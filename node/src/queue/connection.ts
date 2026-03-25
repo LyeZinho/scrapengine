@@ -14,7 +14,22 @@ let redisConnectionOptions: any;
 
 if (redisUrl) {
   console.log('Using REDIS_URL:', redisUrl);
-  redisConnectionOptions = redisUrl;
+  // Parse the Redis URL into host and port for BullMQ compatibility
+  try {
+    const urlObj = new URL(redisUrl);
+    const host = urlObj.hostname || 'redis';
+    const port = urlObj.port ? parseInt(urlObj.port) : 6379;
+    
+    redisConnectionOptions = {
+      host: host,
+      port: port,
+      maxRetriesPerRequest: null,
+    };
+    console.log(`Parsed REDIS_URL to: ${host}:${port}`);
+  } catch (err) {
+    console.error('Failed to parse REDIS_URL, using as-is:', err);
+    redisConnectionOptions = redisUrl;
+  }
 } else {
   const isProduction = process.env.NODE_ENV === 'production';
   // In Docker/production, default to 'redis' service name
