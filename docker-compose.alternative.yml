@@ -1,0 +1,72 @@
+services:
+  node:
+    build:
+      context: ./node
+      dockerfile: Dockerfile
+    container_name: scrapengine-node-alt
+    ports:
+      - "${NODE_PORT:-9000}:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://scrapengine:${DB_PASSWORD:-aYUmCcrfB8k9gV2iOLfnTW0Y}@postgres:5432/scrapengine
+      - REDIS_URL=redis://redis:6379
+      - PYTHON_API_URL=http://python:8000
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
+      - DEFAULT_RATE_LIMIT=${DEFAULT_RATE_LIMIT:-60}
+      - WEBHOOK_TIMEOUT_MS=${WEBHOOK_TIMEOUT_MS:-5000}
+      - WEBHOOK_MAX_RETRIES=${WEBHOOK_MAX_RETRIES:-3}
+      - SCRAPE_TIMEOUT=${SCRAPE_TIMEOUT:-60000}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:9000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  python:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    container_name: scrapengine-python-alt
+    ports:
+      - "${PYTHON_PORT:-9001}:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: scrapengine-redis-alt
+    ports:
+      - "${REDIS_PORT:-9003}:6379"
+    volumes:
+      - redis-data-alt:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: scrapengine-postgres-alt
+    ports:
+      - "${POSTGRES_PORT:-9002}:5432"
+    environment:
+      - POSTGRES_DB=scrapengine
+      - POSTGRES_USER=scrapengine
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-aYUmCcrfB8k9gV2iOLfnTW0Y}
+    volumes:
+      - postgres-data-alt:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scrapengine"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis-data-alt:
+  postgres-data-alt:
