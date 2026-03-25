@@ -10,6 +10,7 @@ import { v1JobRoutes } from './api/v1/jobs.js';
 import { v1WebhookRoutes } from './api/v1/webhooks.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { scrapeUrl } from './scraper/index.js';
+import { redisConnection } from './queue/connection.js';
 
 const app = Fastify({ logger: true });
 
@@ -30,13 +31,7 @@ app.get('/health/ready', async (request, reply) => {
     await pool.query('SELECT 1');
     
     // Check Redis
-    const redis = await import('ioredis');
-    const redisClient = new redis.default({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '7653'),
-    });
-    await redisClient.ping();
-    await redisClient.quit();
+    await redisConnection.ping();
 
     return { status: 'ready', database: 'connected', redis: 'connected' };
   } catch (error) {
