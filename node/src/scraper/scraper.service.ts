@@ -13,10 +13,25 @@ import type { ScraperResult } from './types';
 @Injectable()
 export class ScraperService {
   private browser: Browser | null = null;
+  private browserInitializing = false;
 
-  async onModuleInit() {
-    const launcher = createBrowserLauncher();
-    this.browser = await launcher();
+  private async ensureBrowser() {
+    if (this.browser) return;
+
+    if (this.browserInitializing) {
+      while (!this.browser) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      return;
+    }
+
+    this.browserInitializing = true;
+    try {
+      const launcher = createBrowserLauncher();
+      this.browser = await launcher();
+    } finally {
+      this.browserInitializing = false;
+    }
   }
 
   async onModuleDestroy() {
@@ -27,6 +42,8 @@ export class ScraperService {
 
   async scrape(url: string): Promise<ScraperResult> {
     const startTime = Date.now();
+
+    await this.ensureBrowser();
 
     if (!this.browser) {
       throw new BadRequestException('Scraper not initialized');
