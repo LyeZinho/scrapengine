@@ -5,7 +5,7 @@ import { ClientsModule } from './clients/clients.module';
 import { QueueModule } from './queue/queue.module';
 import { JobsModule } from './jobs/jobs.module';
 import { ScraperModule } from './scraper/scraper.module';
-import { ScrapeProcessor } from './queue/scrape.processor';
+import { ProcessorModule } from './processor/processor.module';
 import { ApiV1Module } from './api/v1/api-v1.module';
 import { HealthModule } from './health/health.module';
 
@@ -17,9 +17,9 @@ import { HealthModule } from './health/health.module';
     QueueModule,
     JobsModule,
     ScraperModule,
+    ProcessorModule,
     ApiV1Module,
     HealthModule,
   ],
-  providers: [ScrapeProcessor],
 })
 export class AppModule {}

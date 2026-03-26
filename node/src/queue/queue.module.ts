@@ -13,5 +13,6 @@ import { BullModule } from '@nestjs/bullmq';
       name: 'scrape',
     }),
   ],
+  exports: [BullModule],
 })
 export class QueueModule {}
