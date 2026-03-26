@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDb } from '../db/db.provider';
+import { sql } from 'drizzle-orm';
 import type { Database } from '../db/client';
 
 @Injectable()
@@ -8,7 +9,7 @@ export class HealthService {
 
   async checkHealth() {
     try {
-      await this.db.execute('SELECT 1');
+      await this.db.execute(sql`SELECT 1`);
       return { status: 'ok', db: 'healthy' };
     } catch {
       return { status: 'error', db: 'unhealthy' };
