@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   node:
     build:
@@ -5,17 +7,26 @@ services:
       dockerfile: Dockerfile
     container_name: scrapengine-node
     ports:
-      - "${NODE_PORT:-3000}:3000"
+      - "${NODE_PORT:-7650}:3000"
     environment:
       - NODE_ENV=production
+      - PORT=3000
       - DATABASE_URL=postgresql://scrapengine:${DB_PASSWORD:-scrap123}@postgres:5432/scrapengine
       - REDIS_URL=redis://redis:6379
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
+      - DEFAULT_RATE_LIMIT=${DEFAULT_RATE_LIMIT:-60}
+      - WEBHOOK_TIMEOUT_MS=${WEBHOOK_TIMEOUT_MS:-5000}
+      - WEBHOOK_MAX_RETRIES=${WEBHOOK_MAX_RETRIES:-3}
+      - SCRAPE_TIMEOUT=${SCRAPE_TIMEOUT:-60000}
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
 
-  # Redis for BullMQ
   redis:
     image: redis:7-alpine
     container_name: scrapengine-redis
@@ -30,7 +41,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
     container_name: scrapengine-postgres
@@ -52,3 +62,4 @@ services:
 volumes:
   redis-data:
   postgres-data:
+
