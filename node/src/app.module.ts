@@ -6,6 +6,7 @@ import { QueueModule } from './queue/queue.module';
 import { JobsModule } from './jobs/jobs.module';
 import { ScraperModule } from './scraper/scraper.module';
 import { ScrapeProcessor } from './queue/scrape.processor';
+import { ApiV1Module } from './api/v1/api-v1.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ScrapeProcessor } from './queue/scrape.processor';
     QueueModule,
     JobsModule,
     ScraperModule,
+    ApiV1Module,
   ],
   providers: [ScrapeProcessor],
 })
